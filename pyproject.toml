@@ -1,0 +1,19 @@
+[project]
+name = "libpixelair"
+version = "0.0.1"
+description = ""
+authors = [
+    {name = "Greg Gibeling",email = "gdgib@outlook.com"}
+]
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+	"aiocoap"
+]
+
+[tool.poetry]
+packages = [{include = "libpixelair", from = "src"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
