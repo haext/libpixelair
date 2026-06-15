@@ -4,10 +4,12 @@ The PixelAirDevice class is the primary interface, allowing a user to
 control any pixelair product, including the Fluora, Fluora Mini, & Monos.
 """
 
-import logging
 import asyncio
+import json
+import logging
 
 from aiocoap import *
+from datetime import datetime
 
 class PixelAirDevice:
     """Abstraction of a PixelAir device.
@@ -58,17 +60,31 @@ class PixelAirDevice:
 
     async def _set_power(self, power: bool) -> None:
         self._logger.info("Set power to %s - Attempting", "ON" if power else "OFF")
-        request_id = self._request_id
-        self._request_id += 1
-        payload = b"{\"protocol\":\"1.1\",\"type\":\"parameter\",\"method\":\"POST\",\"timestamp\":\"2026-06-09T19:26:32.331Z\",\"request_id\":" + str(request_id).encode('utf-8') + b",\"payload\":{\"id\":\"phnzVG\",\"value\":" + str(power).lower().encode('utf-8') + b"}}"
-        await self._send_command(code=POST, payload=payload)
+        await self._send_command(code=POST, type="parameter", payload={
+            "id": "phnzVG",
+            "value": power
+        })
         self._logger.info("Set power to %s - Complete", "ON" if power else "OFF")
 
-    async def _send_command(self, code: Code, payload: bytes) -> None:
-        request = Message(code=code, uri="coap://" + self._ip_address + ":5683/parameter", payload=payload)
+    async def _send_command(self, code: Code, type: string, payload) -> None:
+        request_id = self._request_id
+        self._request_id += 1
+        
+        payload_extended = {
+            "protocol": "1.1",
+            "type": type,
+            "method": code.name_printable,
+            "timestamp": datetime.now().isoformat(),
+            "request_id": str(request_id),
+            "payload": payload
+        }
+        payload_string = json.dumps(payload_extended)
+        self._logger.info("Sending: %s" % payload_string)
+        request = Message(code=code, uri="coap://" + self._ip_address + ":5683/" + type, payload=payload_string.encode('utf-8'))
+        
         try:
           response = await self._protocol.request(request).response
         except Exception as e:
           self._logger.error("Failed to send command: %s" % e)
         else:
-          self._logger.error("Command result: %s (%r)" % (response.code, response.payload))
+          self._logger.info("Command result: %s (%r)" % (response.code, response.payload))
