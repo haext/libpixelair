@@ -24,7 +24,7 @@ py -m pip install .
   * [Wiki](https://wiki.fluoraplant.com/)
   * [Firmware](https://firmware.fluoraplant.com/releases)
 * GitHub Open Source
-  * [koiosdigital/libpixelair](https://github.com/haext/libpixelair) - A similar, but unrelated library which does not support PixelAir 3.0
+  * [koiosdigital/libpixelair](https://github.com/koiosdigital/libpixelair) - A similar, but unrelated library which does not support PixelAir 3.0
   * [homeassistant-pixelair](https://github.com/acvigue/homeassistant-pixelair) - A HomeAssistant (HACS) integration, built on top of the above library
   * [https://github.com/dhoule36/fluora_light](dhoule36/fluora_light) - A HomeAssistant integration built without a library or HACS repository format.
 * Community
